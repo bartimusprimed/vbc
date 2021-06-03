@@ -1,5 +1,5 @@
 // Build Docs
-result := exec("v doc -all -f html -m .") ?
-if result.exit_code != 0 {
-	println(result.output)
-}
+execute_or_panic("v doc -all -f html -m .")
+// Test Build
+t_result := execute_or_panic("v test .")
+println(t_result.output)
