@@ -52,5 +52,7 @@ fn main() {
 		bc.commit_block(mut trans_chain, f, pass_test_proof_str)
 	}
 	println(bc)
+
+	// Search for a block's hash to see if it's in the chain.
 	println(bc.validate_block("95da0fc3eaf399df39e7201e4adc7ebd"))
 }

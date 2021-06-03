@@ -62,5 +62,8 @@ fn test_new_block() {
 		// We pass in a mutable transaction chain, so we can flush it.
 		bc.commit_block(mut trans_chain, p, precomputed_hash_proof_2)
 	}
-	println(bc.blocks)
+
+	// Ensure you can validate a hash
+	assert bc.validate_block(precomputed_hash_1) != "Block hash not found"
+	assert bc.validate_block(precomputed_hash_2) != "Block hash not found"
 }
