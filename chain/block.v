@@ -1,6 +1,6 @@
 module chain
-// This file contains the Block and Block_Chain structures
-// It is pretty simple, a lot of functions that just return the structures
+// chain module contains the block and transaction (and their associated) structures
+// It is pretty simple, a lot of functions to create and modify the core structures.
 import crypto.md5
 
 
@@ -56,6 +56,7 @@ pub fn (mut bc Block_Chain) commit_block(mut transactions Transaction_Chain, pro
 	}
 }
 
+// create_hash_block used internally to create a hashblock with proof
 fn create_hash_block(block &Block, proof string) &Hash_Block {
 	return &Hash_Block{
 		hash: md5.hexhash("$block")
@@ -64,6 +65,8 @@ fn create_hash_block(block &Block, proof string) &Hash_Block {
 	}
 }
 
+// init_genesis initializes the blockchain, using a `transaction` value and `previous_hash` value of `GENESIS`
+// called internally during creation
 fn (mut bc Block_Chain) init_genesis() {
 	genesis_block := &Block{
 		transactions: "GENESIS",
@@ -77,6 +80,8 @@ fn (mut bc Block_Chain) init_genesis() {
 	bc.blocks << hash_block
 }
 
+// check_block_proof takes in a given Transaction_Chain and a proof string value
+// this can be called from some loop that needs to check different proofs (aka mining)
 pub fn (bc Block_Chain) check_block_proof(transactions Transaction_Chain, proof string) (&Block, bool) {
 	block := bc.create_new_block(transactions.to_string())
 	total_to_hash := "$block" + "$proof"
@@ -89,6 +94,8 @@ pub fn (bc Block_Chain) check_block_proof(transactions Transaction_Chain, proof 
 	return block, true
 }
 
+// validate_block takes in a hash from a block and checks for it's presence in the chain
+// a wallet could use this to track transactions with some additional additions
 pub fn (bc Block_Chain) validate_block(block_hash string) string {
 	for hash_block in bc.blocks {
 		if hash_block.hash == block_hash {
@@ -98,13 +105,15 @@ pub fn (bc Block_Chain) validate_block(block_hash string) string {
 	return "Block hash not found"
 }
 
-pub fn (bc Block_Chain) create_new_block(transactions string) &Block {
+// create_new_block is used internally to create a new block, it holds transactions
+fn (bc Block_Chain) create_new_block(transactions string) &Block {
 	return &Block{
 		transactions: transactions
 		previous_hash: bc.blocks[bc.blocks.len - 1].hash
 	}
 }
 
+// to_string is a helper function, probably not needed, but it exists.
 pub fn (b Block) to_string() string {
 	return "$b"
 }
