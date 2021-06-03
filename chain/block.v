@@ -42,9 +42,18 @@ pub fn create_new_blockchain(satisfaction_pattern string) &Block_Chain{
 	return bc
 }
 
-pub fn (mut bc Block_Chain) commit_block(mut transactions Transaction_Chain, block &Block, proof string) {
-	bc.blocks <<  create_hash_block(block, proof)
-	transactions.flush_transaction_chain()
+// commit_block takes in the mutable transaction chain and the proof.
+// It will check the proof and chain hash results in the satisfaction pattern.
+// Call the function with an empty string if no satisfaction pattern is required.
+pub fn (mut bc Block_Chain) commit_block(mut transactions Transaction_Chain, proof string) {
+	b, res := bc.check_block_proof(transactions, proof)
+	if res {
+		bc.blocks <<  create_hash_block(b, proof)
+		transactions.flush_transaction_chain()
+	} else {
+		// This panics, but if you would like it to fail gracefully, just change it to a println or comment out
+		panic("\n=============\nFailed to commit block to chain: The proof given did not result in: $bc.satisfaction_pattern\n================\n")
+	}
 }
 
 fn create_hash_block(block &Block, proof string) &Hash_Block {
@@ -72,12 +81,12 @@ pub fn (bc Block_Chain) check_block_proof(transactions Transaction_Chain, proof 
 	block := bc.create_new_block(transactions.to_string())
 	total_to_hash := "$block" + "$proof"
 	b_hash := md5.hexhash(total_to_hash)
-	if b_hash[0..4] == bc.satisfaction_pattern {
-		return block, true
+	if bc.satisfaction_pattern != "" {
+		if b_hash[0..4] != bc.satisfaction_pattern {
+			return block, false
+		}
 	}
-	else {
-		return block, false
-	}
+	return block, true
 }
 
 pub fn (bc Block_Chain) validate_block(block_hash string) string {

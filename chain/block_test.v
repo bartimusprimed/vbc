@@ -36,7 +36,7 @@ fn test_new_block() {
 		// 121420 computed through should be this hash
 		assert block_hash == precomputed_hash_1
 		// We pass in a mutable transaction chain, so we can flush it.
-		bc.commit_block(mut trans_chain, b, precomputed_hash_proof_1)
+		bc.commit_block(mut trans_chain, precomputed_hash_proof_1)
 	}
 
 	// Same as above, just checking some other characters
@@ -60,7 +60,7 @@ fn test_new_block() {
 		// 98164 computed through should be this hash
 		assert block_hash == precomputed_hash_2
 		// We pass in a mutable transaction chain, so we can flush it.
-		bc.commit_block(mut trans_chain, p, precomputed_hash_proof_2)
+		bc.commit_block(mut trans_chain, precomputed_hash_proof_2)
 	}
 
 	// Ensure you can validate a hash

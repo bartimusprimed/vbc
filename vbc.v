@@ -10,6 +10,7 @@ import chain
 import entities
 fn main() {
 	// Create a blockchain, pass in the satisfaction string that the proof should generate
+	// if you use empty "" then a blockchain will be formed without hash verification
 	mut bc := chain.create_new_blockchain("abcd")
 
 	// Create users that act on the block chain
@@ -33,23 +34,23 @@ fn main() {
 	// PASS CASE
 	pass_test_proof_str := "105448"
 
-	p, p_res := bc.check_block_proof(trans_chain, pass_test_proof_str)
+	_, p_res := bc.check_block_proof(trans_chain, pass_test_proof_str)
 	// r returns true if the pattern matched
 	if p_res {
 		// b contains the block that you can then commit to the chain
 		// println(p)
-		bc.commit_block(mut trans_chain, p, pass_test_proof_str)
+		bc.commit_block(mut trans_chain, pass_test_proof_str)
 	}
 	
 	// FAIL CASE
 	fail_test_proof_str := "904901"
 	// Check block proof
-	f, f_res := bc.check_block_proof(trans_chain, fail_test_proof_str)
+	_, f_res := bc.check_block_proof(trans_chain, fail_test_proof_str)
 	// r returns true if the pattern matched
 	if f_res {
 		// This should never happen as this fails
 		// println(f)
-		bc.commit_block(mut trans_chain, f, pass_test_proof_str)
+		bc.commit_block(mut trans_chain, pass_test_proof_str)
 	}
 	println(bc)
 
