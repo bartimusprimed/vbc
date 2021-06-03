@@ -24,15 +24,19 @@ fn test_new_block() {
 	trans_chain.transactions << int_transact2
 	trans_chain.transactions << int_transact3
 	
+	precomputed_hash_proof_1 := "19260"
+	precomputed_hash_1 := "f068653a95624bd22c8243bf43e161b2"
+
 	// Check to see if the hashing works <- 121420 precomputed, should pass
-	b, i_res := bc.check_block_proof(trans_chain, "121420")
+
+	b, i_res := bc.check_block_proof(trans_chain, precomputed_hash_proof_1)
 	assert i_res == true
 	if i_res {
 		block_hash := md5.hexhash("$b")
 		// 121420 computed through should be this hash
-		assert block_hash == "abcd5aaace3db9a295a6b18cbc89e067"
+		assert block_hash == precomputed_hash_1
 		// We pass in a mutable transaction chain, so we can flush it.
-		bc.commit_block(mut trans_chain, b)
+		bc.commit_block(mut trans_chain, b, precomputed_hash_proof_1)
 	}
 
 	// Same as above, just checking some other characters
@@ -45,15 +49,18 @@ fn test_new_block() {
 	trans_chain.transactions << str_transact2
 	trans_chain.transactions << str_transact3
 
+	precomputed_hash_proof_2 := "35757"
+	precomputed_hash_2 := "28bda904d18aef9c20a723743cdffbed"
+
 	// Check to see if the hashing works <- 98164 precomputed, should pass
-	p, p_res := bc.check_block_proof(trans_chain, "98164")
+	p, p_res := bc.check_block_proof(trans_chain, precomputed_hash_proof_2)
 	assert p_res == true
 	if p_res {
 		block_hash := md5.hexhash("$p")
 		// 98164 computed through should be this hash
-		assert block_hash == "abcd3dad16cdc0924f200fcdfef5a536"
+		assert block_hash == precomputed_hash_2
 		// We pass in a mutable transaction chain, so we can flush it.
-		bc.commit_block(mut trans_chain, p)
+		bc.commit_block(mut trans_chain, p, precomputed_hash_proof_2)
 	}
-	// println(bc.blocks)
+	println(bc.blocks)
 }

@@ -31,13 +31,14 @@ fn main() {
 
 
 	// PASS CASE
-	pass_test_proof_str := "22073"
+	pass_test_proof_str := "105448"
+
 	p, p_res := bc.check_block_proof(trans_chain, pass_test_proof_str)
 	// r returns true if the pattern matched
 	if p_res {
 		// b contains the block that you can then commit to the chain
-		println(p)
-		bc.commit_block(mut trans_chain, p)
+		// println(p)
+		bc.commit_block(mut trans_chain, p, pass_test_proof_str)
 	}
 	
 	// FAIL CASE
@@ -47,8 +48,9 @@ fn main() {
 	// r returns true if the pattern matched
 	if f_res {
 		// This should never happen as this fails
-		println(f)
-		bc.commit_block(mut trans_chain, f)
+		// println(f)
+		bc.commit_block(mut trans_chain, f, pass_test_proof_str)
 	}
 	println(bc)
+	println(bc.validate_block("95da0fc3eaf399df39e7201e4adc7ebd"))
 }

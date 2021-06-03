@@ -9,7 +9,6 @@ import crypto.md5
 [heap]
 pub struct Block {
 	transactions string
-	proof string
 	previous_hash string
 }
 
@@ -17,6 +16,7 @@ pub struct Block {
 [heap]
 pub struct Hash_Block {
 	hash string
+	proof string
 	block Block
 }
 
@@ -42,14 +42,15 @@ pub fn create_new_blockchain(satisfaction_pattern string) &Block_Chain{
 	return bc
 }
 
-pub fn (mut bc Block_Chain) commit_block(mut transactions Transaction_Chain, block &Block) {
-	bc.blocks <<  create_hash_block(block)
+pub fn (mut bc Block_Chain) commit_block(mut transactions Transaction_Chain, block &Block, proof string) {
+	bc.blocks <<  create_hash_block(block, proof)
 	transactions.flush_transaction_chain()
 }
 
-fn create_hash_block(block &Block) &Hash_Block {
+fn create_hash_block(block &Block, proof string) &Hash_Block {
 	return &Hash_Block{
 		hash: md5.hexhash("$block")
+		proof: proof
 		block: block
 	}
 }
@@ -57,19 +58,20 @@ fn create_hash_block(block &Block) &Hash_Block {
 fn (mut bc Block_Chain) init_genesis() {
 	genesis_block := &Block{
 		transactions: "GENESIS",
-		proof: "GENESIS",
 		previous_hash: "GENESIS"
 	}
 	hash_block := &Hash_Block{
 		hash: md5.hexhash("$genesis_block")
+		proof: "GENESIS"
 		block: genesis_block
 	}
 	bc.blocks << hash_block
 }
 
 pub fn (bc Block_Chain) check_block_proof(transactions Transaction_Chain, proof string) (&Block, bool) {
-	block := bc.create_new_block(transactions.to_string(), proof)
-	b_hash := md5.hexhash("$block")
+	block := bc.create_new_block(transactions.to_string())
+	total_to_hash := "$block" + "$proof"
+	b_hash := md5.hexhash(total_to_hash)
 	if b_hash[0..4] == bc.satisfaction_pattern {
 		return block, true
 	}
@@ -78,10 +80,18 @@ pub fn (bc Block_Chain) check_block_proof(transactions Transaction_Chain, proof 
 	}
 }
 
-pub fn (bc Block_Chain) create_new_block(transactions string, proof string) &Block {
+pub fn (bc Block_Chain) validate_block(block_hash string) string {
+	for hash_block in bc.blocks {
+		if hash_block.hash == block_hash {
+			return "Found block with hash: $hash_block.hash, proof assigned: $hash_block.proof"
+		}
+	}
+	return "Block hash not found"
+}
+
+pub fn (bc Block_Chain) create_new_block(transactions string) &Block {
 	return &Block{
 		transactions: transactions
-		proof: proof
 		previous_hash: bc.blocks[bc.blocks.len - 1].hash
 	}
 }
