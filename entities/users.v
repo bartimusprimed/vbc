@@ -12,8 +12,8 @@ pub struct User {
 }
 
 // new_user is a simple function that returns a User.
-pub fn new_user(name string, identity int) User {
-	return User{
+pub fn new_user(name string, identity int) &User {
+	return &User{
 		name: name
 		identity: identity
 	}
