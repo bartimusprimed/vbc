@@ -4,6 +4,16 @@ A simple blockchain written in pure V. Very early in its lifecycle. I started wr
 
 Documentation [https://bartimus-primed.github.io/vbc/index.html]
 
+## Changelog
+**0.0.2**
+- Added in the timestamp to the transactions.
+- Changed some test cases (I was wanting to use precomputed hashes but since I added in time to the transactions, I needed to change the test cases to proof. You can still create a blockchain without a proof parameter "" and it still works)
+
+
+**0.0.1**
+- Initial project
+
+
 ## Specs
 
 - Currently supports a bare blockchain without needed any proof
