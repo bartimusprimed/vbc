@@ -2,6 +2,8 @@
 
 A simple blockchain written in pure V. Very early in its lifecycle. I started writing it because I was learning more about blockchains.
 
+Documentation [https://bartimus-primed.github.io/vbc/index.html]
+
 ## Specs
 
 - Currently supports a bare blockchain without needed any proof
