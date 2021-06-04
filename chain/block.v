@@ -2,7 +2,7 @@ module chain
 // chain module contains the block and transaction (and their associated) structures
 // It is pretty simple, a lot of functions to create and modify the core structures.
 import crypto.md5
-
+import entities
 
 // Block is the basic structure.
 // It contains a list of transactions, the proof used to check them, and the previous hash
@@ -68,8 +68,12 @@ fn create_hash_block(block &Block, proof string) &Hash_Block {
 // init_genesis initializes the blockchain, using a `transaction` value and `previous_hash` value of `GENESIS`
 // called internally during creation
 fn (mut bc Block_Chain) init_genesis() {
+	genesis_user := entities.new_user("Genesis", 0)
+	genesis_transaction :=  new_transaction(genesis_user,genesis_user,"GENESIS")
+	mut genesis_transaction_chain := new_transaction_chain()
+	genesis_transaction_chain.transactions << genesis_transaction
 	genesis_block := &Block{
-		transactions: "GENESIS",
+		transactions: genesis_transaction_chain.to_string(),
 		previous_hash: "GENESIS"
 	}
 	hash_block := &Hash_Block{

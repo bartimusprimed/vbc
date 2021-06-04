@@ -8,11 +8,14 @@
 module main
 import chain
 import entities
+import crypto.md5
 fn main() {
 	// Create a blockchain, pass in the satisfaction string that the proof should generate
 	// if you use empty "" then a blockchain will be formed without hash verification
+	println("This is a sample blockchain set up, it didn't freeze... It is looking for proof")
+	// Change this to an empty string if you want to get rid of proof
 	mut bc := chain.create_new_blockchain("abcd")
-
+	mut block_validated := ""
 	// Create users that act on the block chain
 	to_user := entities.new_user("jane", 0)
 	from_user := entities.new_user("jack", 1)
@@ -32,16 +35,17 @@ fn main() {
 
 
 	// PASS CASE
-	pass_test_proof_str := "105448"
-
-	_, p_res := bc.check_block_proof(trans_chain, pass_test_proof_str)
-	// r returns true if the pattern matched
-	if p_res {
-		// b contains the block that you can then commit to the chain
-		// println(p)
-		bc.commit_block(mut trans_chain, pass_test_proof_str)
+	for pass_test_proof_str in 0..1000000 {
+		b, p_res := bc.check_block_proof(trans_chain, "$pass_test_proof_str")
+		// r returns true if the pattern matched
+		if p_res {
+			// b contains the block that you can then commit to the chain
+			block_validated = md5.hexhash("$b")
+			// println(p)
+			bc.commit_block(mut trans_chain, "$pass_test_proof_str")
+			break
+		}
 	}
-	
 	// FAIL CASE
 	fail_test_proof_str := "904901"
 	// Check block proof
@@ -50,10 +54,10 @@ fn main() {
 	if f_res {
 		// This should never happen as this fails
 		// println(f)
-		bc.commit_block(mut trans_chain, pass_test_proof_str)
+		bc.commit_block(mut trans_chain, fail_test_proof_str)
 	}
 	println(bc)
 
 	// Search for a block's hash to see if it's in the chain.
-	println(bc.validate_block("95da0fc3eaf399df39e7201e4adc7ebd"))
+	println(bc.validate_block(block_validated))
 }

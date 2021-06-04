@@ -1,6 +1,6 @@
 module chain 
 import entities
-
+import time
 // Transaction is a very simple structure, it consists of `to` and `from` of type `&entities.User`
 // the transaction contains an `item` of type `string`. I originally had this item as a generic
 // but I was running into issues with heap structures being generic, when attempting to hash them
@@ -10,6 +10,7 @@ pub struct Transaction {
 	to &entities.User
 	from &entities.User
 	item string
+	time time.Time
 }
 
 
@@ -29,7 +30,7 @@ pub fn (mut tc Transaction_Chain) flush_transaction_chain() {
 // new_transaction needs a `to` and `from` `&entities.User` as well as an item that is being tracked.
 // and returns a transaction structure that can be applied to the transaction chain.
 pub fn new_transaction(to &entities.User, from &entities.User, item string) &Transaction {
-	return &Transaction{to: to, from: from, item: item}
+	return &Transaction{to: to, from: from, item: item, time: time.now()}
 }
 
 // new_transaction_chain creates a new list of transactions, I was going to join this into the blockchain
